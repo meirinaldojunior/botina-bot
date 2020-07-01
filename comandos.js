@@ -13,7 +13,7 @@ function retornaAcao(cod, ctx) {
     cod = cod.toUpperCase().trim();
 
     // bovespa(cod, moment().format('YYYY-MM-DD'))
-    bovespa(cod, "2019-04-01").then((resp) => {
+    bovespa(cod, moment().format('YYYY-MM-DD')).then((resp) => {
         console.log(resp);
         ctx.reply(`Agora em *${resp.codneg}*: PM *${resp.modref}: ${resp.premed}*`, markup);
     }).catch((resp) => {
