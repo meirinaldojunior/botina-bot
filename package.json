@@ -9,9 +9,13 @@
   "author": "Meirinaldo Junior",
   "license": "ISC",
   "dependencies": {
+    "axios": "^0.19.2",
     "bovespa": "^0.2.5",
+    "dotenv": "^8.2.0",
     "moment": "^2.27.0",
+    "nodemon": "^2.0.4",
     "telegraf": "^3.38.0",
-    "telegraf-keyboard": "^1.1.2"
+    "telegraf-keyboard": "^1.1.2",
+    "twitter": "^1.7.1"
   }
 }
