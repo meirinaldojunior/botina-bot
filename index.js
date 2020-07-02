@@ -26,7 +26,7 @@ const keyboard = new Keyboard(optionsKeyboard);
 // Keyboard menu boas vindas
 keyboard
     .add('Boas Vindas')
-    .add('/acao {Cod ACAO}', '/espresso19')
+    .add('/acao Cod_Acao', '/espresso')
     .add('/cotacao USD', '/cotacao BTC')
 
 // Boas vindas
@@ -46,12 +46,12 @@ bot.command('/cotacao', async (ctx) => {
     ctx.reply(`A cotação atual de *${r.code}* é *${r.bid}*`, markup)
 })
 
-bot.command('/espresso19', async (ctx) => {
+bot.command('/espresso', async (ctx) => {
     console.log(ctx.update.message.chat);
 
-    let r = await news.newsTC();
+    let r = await news.newsTC('Inicio do Dia');
     await ctx.replyWithPhoto(r.img)
-    await ctx.reply('*======== Espresso - 19h00 ========*', markup)
+    await ctx.reply('*======== Espresso ========*', markup)
     await ctx.reply(`*${r.titulo}*`, markup)
     await ctx.reply(`${r.text.substring(0, 3500)}... Continue lendo em https://tc.tradersclub.com.br/tradersclub/channels/tc_news`)
 
@@ -62,18 +62,26 @@ bot.command('/espresso19', async (ctx) => {
     });
 })
 
-var j = schedule.scheduleJob('*/1 * * * *', async function () {
+var j = schedule.scheduleJob('*/5 * * * *', async function () {
     let r = await news.radarTC(bot);
 });
 
-var j = schedule.scheduleJob('*/1 * * * *', async function () {
-    let r = await news.newsTC();
-
+var j = schedule.scheduleJob('05 08 * * *', async function () {
+    let r = await news.newsTC('Inicio do Dia');
     rfsIds.gruposTelegram.forEach(async elem => {
-        console.log(elem);
-        await bot.telegram.sendMessage(elem.id, '*======== Espresso - 19h00 ========*', markup);
-        await bot.telegram.sendMessage(elem.id, `*${r.titulo}*`, markup);
-        await bot.telegram.sendMessage(elem.id, `${r.text.substring(0, 3500)}... Continue lendo em https://tc.tradersclub.com.br/tradersclub/channels/tc_news`, markup);
+        await bot.telegram.sendMessage(elem.id, r.tituloSecao, markup);
+        await bot.telegram.sendPhoto(elem.id, r.img);
+        await bot.telegram.sendMessage(elem.id, `${r.text.substring(0, 2500)}...`, markup);
+    });
+});
+
+
+var j = schedule.scheduleJob('05 19 * * *', async function () {
+    let r = await news.newsTC('Fim do Dia');
+    rfsIds.gruposTelegram.forEach(async elem => {
+        await bot.telegram.sendMessage(elem.id, r.tituloSecao, markup);
+        await bot.telegram.sendPhoto(elem.id, r.img);
+        await bot.telegram.sendMessage(elem.id, `${r.text.substring(0, 2500)}...`, markup);
     });
 });
 

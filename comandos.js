@@ -5,26 +5,32 @@ const {
     Telegraf,
     Extra
 } = require('telegraf')
+require('dotenv').config();
 
 const markup = Extra.markdown()
 
 // Retorna informações de uma ação
-function retornaAcao(cod, ctx) {
+async function retornaAcao(cod, ctx) {
     cod = cod.toUpperCase().trim();
 
-    // bovespa(cod, moment().format('YYYY-MM-DD'))
-    bovespa(cod, moment().format('YYYY-MM-DD')).then((resp) => {
-        console.log(resp);
-        ctx.reply(`Agora em *${resp.codneg}*: PM *${resp.modref}: ${resp.premed}*`, markup);
-    }).catch((resp) => {
-        console.log(resp);
-        ctx.reply(`Desculpe, mercado fechado ou ação inválida!`);
-    })
+    var r = await axios.get(`https://api.hgbrasil.com/finance/stock_price?key=${process.env.HGBRASIL_TOKEN_API}&symbol=${cod}`)
+
+    if(firstInObject(r.data.results).error){
+        ctx.reply(`Código da ação inválido 😕`, markup);
+    }else{
+        ctx.reply(`Agora em *${firstInObject(r.data.results).symbol}*: PM *${firstInObject(r.data.results).price}: ${firstInObject(r.data.results).change_percent} %*`, markup);
+    }
+
 }
 
 async function cotacaoMoeda(moeda) {
     let r = await axios.get(`https://economia.awesomeapi.com.br/json/${moeda.toUpperCase().trim()}`);
     return r.data[0];
+}
+
+function firstInObject(obj)
+{
+        for (var key in obj) return obj[key];
 }
 
 

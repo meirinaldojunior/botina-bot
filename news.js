@@ -10,7 +10,7 @@ const markup = Extra.markdown()
 
 require('dotenv').config();
 
-async function newsTC() {
+async function newsTC(periodoDia) {
     let news = await axios('https://tc.tradersclub.com.br/news/api/articles/active', {
         params: {},
         headers: {
@@ -19,6 +19,7 @@ async function newsTC() {
     })
 
     return {
+        'tituloSecao': `*======== Espresso ${periodoDia} ========*`,
         'img': news.data.banner_url,
         'text': convertHtmlToText(news.data.content),
         'titulo': news.data.title,
